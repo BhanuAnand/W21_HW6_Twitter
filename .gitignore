@@ -1,0 +1,8 @@
+# Ignore cache json file
+twitter_cache.json
+
+# Ignore secret keys file
+hw6_secrets_starter.py
+
+# Ignore cache folder
+__pycache__
