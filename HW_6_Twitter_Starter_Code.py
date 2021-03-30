@@ -96,11 +96,12 @@ def construct_unique_key(baseurl, params):
     string
         the unique key as a string
     '''
-    unique_key = baseurl
-    for i in params:
-        key = i
-        value = str(params[i])
-        unique_key = unique_key+'_'+key+'_'+value
+    param_strings = []
+    connector = '_'
+    for i in params.keys():
+        param_strings.append(f'{i}_{params[i]}')
+    param_strings.sort()
+    unique_key = baseurl+connector+connector.join(param_strings)
     return unique_key
 
 
@@ -153,7 +154,7 @@ def make_request_with_cache(baseurl, hashtag, count):
         the results of the query as a dictionary loaded from cache
         JSON
     '''
-    params = {'q': hashtag, 'count': count}
+    params = {'count': count, 'q': hashtag}
     unique_key = construct_unique_key(baseurl, params)
     if unique_key in CACHE_DICT:
         print("fetching cached data")
@@ -186,12 +187,13 @@ def find_most_common_cooccurring_hashtag(tweet_data, hashtag_to_ignore):
         queried in make_request_with_cache()
 
     '''
-   
+    hashtag_in_response = ''
     for elem in tweet_data["statuses"]:
         hashtags_list = elem["entities"]["hashtags"]
         for hashtag_entry in hashtags_list:
-            if hashtag_entry["text"] != hashtag_to_ignore[1:]:
-                return "#"+hashtag_entry["text"]
+            hashtag_in_response = hashtag_entry["text"]
+            if hashtag_in_response.lower() != hashtag_to_ignore[1:].lower():
+                return hashtag_in_response.lower()
 
 
 if __name__ == "__main__":
